@@ -1,24 +1,58 @@
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 
 function App() {
+  const [ws, setWs] = useState(null);
+  const [message, setMessage] = useState('');
+  const [response, setResponse] = useState('');
+
+  useEffect(() => {
+    const socket = new WebSocket('ws://localhost:8080');
+
+    socket.onopen = () => {
+      console.log('WebSocket connection opened');
+      setWs(socket);
+    };
+
+    socket.onmessage = (event) => {
+      console.log('Received from server:', event.data);
+      setResponse(event.data);
+    };
+
+    socket.onclose = () => {
+      console.log('WebSocket connection closed');
+    };
+
+    socket.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, []);
+
+  const sendMessage = () => {
+    if (ws) {
+      console.log('Sending message:', message);
+      ws.send(message);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div className="App">
+        <header className="App-header">
+          <h1>WebSocket Client</h1>
+          <input
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Enter message"
+          />
+          <button onClick={sendMessage}>Send Message</button>
+          <p>Response from server: {response}</p>
+        </header>
+      </div>
   );
 }
 
