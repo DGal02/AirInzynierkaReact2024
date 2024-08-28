@@ -1,23 +1,23 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import MyPlot from "./Plots/MyPlot";
 import './App.css';
 
 function App() {
-    const [ws, setWs] = useState(null);
     const [message, setMessage] = useState('');
-    const [response, setResponse] = useState('');
+    const [dataA, setDataA] = useState([]);
+    const ws = useRef(null);
 
     useEffect(() => {
         const socket = new WebSocket('ws://localhost:8080');
 
         socket.onopen = () => {
             console.log('WebSocket connection opened');
-            setWs(socket);
+            ws.current = socket;
         };
 
         socket.onmessage = (event) => {
             console.log('Received from server:', event.data);
-            setResponse(event.data);
+            setDataA(prevState => [...prevState, ...JSON.parse(event.data)]);
         };
 
         socket.onclose = () => {
@@ -34,14 +34,21 @@ function App() {
     }, []);
 
     const sendMessage = () => {
-        if (ws) {
+        if (ws.current) {
             const messageStruct = {
-                power: parseInt(message)
+                power: 10
             };
-            console.log('Sending message:', JSON.stringify(messageStruct));
-            ws.send(JSON.stringify(messageStruct));
+            ws.current.send(JSON.stringify(messageStruct));
         }
     };
+
+    useEffect(() => {
+        const intervalId = setInterval(sendMessage, 1000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, []);
 
     return (
         <div className="App">
@@ -54,7 +61,7 @@ function App() {
                     placeholder="Enter message"
                 />
                 <button onClick={sendMessage}>Send Message</button>
-                {response && <MyPlot y={JSON.parse(response)}/>}
+                <MyPlot y={dataA}/>
             </header>
         </div>
     );
