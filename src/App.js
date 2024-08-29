@@ -16,8 +16,11 @@ function App() {
         };
 
         socket.onmessage = (event) => {
+            const response = JSON.parse(event.data);
+            let fixedDataA = response.map(value => value / 1000);
+
             console.log('Received from server:', event.data);
-            setDataA(prevState => [...prevState, ...JSON.parse(event.data)]);
+            setDataA(prevState => [...prevState, ...fixedDataA]);
         };
 
         socket.onclose = () => {
