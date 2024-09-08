@@ -1,70 +1,103 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import MyPlot from "./Plots/MyPlot";
 import './App.css';
 
+const START_FETCHING_JSON = JSON.stringify({
+    isFetching: 1
+});
+
+const STOP_FETCHING_JSON = JSON.stringify({
+    isFetching: 0
+});
+
 function App() {
-    const [message, setMessage] = useState('');
+    const [amplitudeA, setAmplitudeA] = useState(1.0);
+    const [amplitudeB, setAmplitudeB] = useState(1.0);
     const [dataA, setDataA] = useState([]);
-    const ws = useRef(null);
+    const [dataB, setDataB] = useState([]);
+    const [fetchingInterval, setFetchingInterval] = useState(null);
+    const webSocket = useRef(null);
 
     useEffect(() => {
         const socket = new WebSocket('ws://localhost:8080');
-
         socket.onopen = () => {
-            console.log('WebSocket connection opened');
-            ws.current = socket;
+            webSocket.current = socket;
         };
 
         socket.onmessage = (event) => {
             const response = JSON.parse(event.data);
-            let fixedDataA = response.map(value => value / 1000);
-
-            console.log('Received from server:', event.data);
+            const dataA = response.dataA;
+            const dataB = response.dataB;
+            let fixedDataA = dataA.map(value => value / 1000);
+            let fixedDataB = dataB.map(value => value / 1000);
             setDataA(prevState => [...prevState, ...fixedDataA]);
+            setDataB(prevState => [...prevState, ...fixedDataB]);
         };
 
-        socket.onclose = () => {
-            console.log('WebSocket connection closed');
-        };
-
-        socket.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        };
+        // socket.onerror = (error) => {
+        //     // TODO Handle error (optional)
+        // };
 
         return () => {
             socket.close();
         };
     }, []);
 
-    const sendMessage = () => {
-        if (ws.current) {
+    const sendMessageChange = () => {
+        if (webSocket.current) {
             const messageStruct = {
-                power: 10
+                amplitudeA: amplitudeA ? amplitudeA : 1.0,
+                amplitudeB: amplitudeB ? amplitudeB : 1.0,
             };
-            ws.current.send(JSON.stringify(messageStruct));
+            webSocket.current.send(JSON.stringify(messageStruct));
         }
     };
 
-    useEffect(() => {
-        const intervalId = setInterval(sendMessage, 1000);
+    const resetPlots = () => {
+        setDataA([]);
+        setDataB([]);
+    };
 
-        return () => {
-            clearInterval(intervalId);
-        };
-    }, []);
+    const startFetching = () => {
+        if (webSocket.current) {
+            setFetchingInterval(setInterval(() => {
+                webSocket.current.send(START_FETCHING_JSON);
+            }, 100));
+        }
+    };
+
+    const stopFetching = () => {
+        if (webSocket.current) {
+            webSocket.current.send(STOP_FETCHING_JSON);
+            clearInterval(fetchingInterval);
+            setFetchingInterval(null);
+        }
+    };
 
     return (
         <div className="App">
             <header className="App-header">
                 <h1>WebSocket Client</h1>
                 <input
-                    type="text"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Enter message"
+                    type="number"
+                    value={amplitudeA}
+                    onChange={(e) => setAmplitudeA(e.target.value)}
+                    placeholder="amplitude A"
                 />
-                <button onClick={sendMessage}>Send Message</button>
-                <MyPlot y={dataA}/>
+                <input
+                    type="number"
+                    value={amplitudeB}
+                    onChange={(e) => setAmplitudeB(e.target.value)}
+                    placeholder="amplitude B"
+                />
+                <button onClick={sendMessageChange}>Send Message</button>
+                <button onClick={resetPlots}>Reset plots</button>
+                {fetchingInterval === null && <button onClick={startFetching}>Start Fetching</button>}
+                {fetchingInterval && <button onClick={stopFetching}>Stop Fetching</button>}
+                <div id="plot-container">
+                    <MyPlot y={dataA}/>
+                    <MyPlot y={dataB}/>
+                </div>
             </header>
         </div>
     );
