@@ -46,8 +46,8 @@ function App() {
     const sendMessageChange = () => {
         if (webSocket.current) {
             const messageStruct = {
-                amplitudeA: amplitudeA ? amplitudeA : 1.0,
-                amplitudeB: amplitudeB ? amplitudeB : 1.0,
+                amplitudeA: amplitudeA ? parseFloat(amplitudeA) : 1.0,
+                amplitudeB: amplitudeB ? parseFloat(amplitudeB) : 1.0,
             };
             webSocket.current.send(JSON.stringify(messageStruct));
         }
