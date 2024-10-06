@@ -74,6 +74,20 @@ function App() {
         }
     };
 
+    const downloadJsonFile = () => {
+        const data = {
+            dataA,
+            dataB,
+        };
+        const jsonData = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonData], { type: 'application/json' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'data.json';
+        link.click();
+        URL.revokeObjectURL(link.href);
+    };
+
     return (
         <div className="App">
             <header className="App-header">
@@ -92,6 +106,7 @@ function App() {
                 />
                 <button onClick={sendMessageChange}>Send Message</button>
                 <button onClick={resetPlots}>Reset plots</button>
+                <button onClick={downloadJsonFile}>Download data</button>
                 {fetchingInterval === null && <button onClick={startFetching}>Start Fetching</button>}
                 {fetchingInterval && <button onClick={stopFetching}>Stop Fetching</button>}
                 <div id="plot-container">
