@@ -28,8 +28,9 @@ function App() {
             const response = JSON.parse(event.data);
             const dataA = response.dataA;
             const dataB = response.dataB;
-            let fixedDataA = dataA.map(value => value / 1000);
-            let fixedDataB = dataB.map(value => value / 1000);
+            const imp2rad = 5.98364147543706e-9;
+            let fixedDataA = dataA.map(value => value * imp2rad);
+            let fixedDataB = dataB.map(value => value * imp2rad);
             setDataA(prevState => [...prevState, ...fixedDataA]);
             setDataB(prevState => [...prevState, ...fixedDataB]);
         };
@@ -62,7 +63,7 @@ function App() {
         if (webSocket.current) {
             setFetchingInterval(setInterval(() => {
                 webSocket.current.send(START_FETCHING_JSON);
-            }, 100));
+            }, 1000));
         }
     };
 

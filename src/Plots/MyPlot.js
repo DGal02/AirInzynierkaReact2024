@@ -28,7 +28,7 @@ const MyPlot = ({y}) => {
     const plotData =
         [
             {
-                x: Array.from({length: y.length}, (_, index) => index / 3), // Oś X
+                x: Array.from({length: y.length}, (_, index) => index / 1), // Oś X
                 y,
                 type: 'scatter',
                 mode: 'lines+markers',
