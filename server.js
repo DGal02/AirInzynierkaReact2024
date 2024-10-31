@@ -3,7 +3,7 @@ const net = require('net');
 
 const wss = new WebSocket.Server({ port: 8080 });
 const STM32_HOST = '192.168.1.10';
-const STM32_PORT = 5001;
+const STM32_PORT = 5002;
 
 wss.on('connection', (ws) => {
     console.log('WebSocket connection established');
