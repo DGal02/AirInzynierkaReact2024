@@ -32,7 +32,8 @@ function App() {
             let fixedDataA = dataA.map(value => value * imp2rad);
             let fixedDataB = dataB.map(value => value * imp2rad);
             setDataA(prevState => [...prevState, ...fixedDataA]);
-            setDataB(prevState => [...prevState, ...fixedDataB]);
+            // setDataB(prevState => [...prevState, ...fixedDataB]);
+            setDataB(prevState => [...prevState, ...dataA]);
         };
 
         // socket.onerror = (error) => {

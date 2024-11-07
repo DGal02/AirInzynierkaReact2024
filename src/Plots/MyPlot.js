@@ -24,7 +24,7 @@ const layout = {
 };
 
 const MyPlot = ({y}) => {
-    const [plotLayout, setPlotLayout] = useState(layout);
+    const [plotLayout, setPlotLayout] = useState(structuredClone(layout));
     const plotData =
         [
             {
