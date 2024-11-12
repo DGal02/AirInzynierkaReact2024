@@ -13,12 +13,12 @@ wss.on('connection', (ws) => {
     });
 
     ws.on('message', (message) => {
-        console.log('Received from browser:', message);
+        // console.log('Received from browser:', message);
         client.write(message);
     });
 
     client.on('data', (data) => {
-        console.log('Received from STM32:', data.toString());
+        // console.log('Received from STM32:', data.toString());
         ws.send(data.toString());
     });
 

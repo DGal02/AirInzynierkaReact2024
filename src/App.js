@@ -1,14 +1,7 @@
 import React, {useEffect, useState, useRef} from 'react';
 import MyPlot from "./Plots/MyPlot";
+import {START_FETCHING_JSON, STOP_FETCHING_JSON, ANGLE, RAW, RAD} from './Util/AppHelper';
 import './App.css';
-
-const START_FETCHING_JSON = JSON.stringify({
-    isFetching: 1
-});
-
-const STOP_FETCHING_JSON = JSON.stringify({
-    isFetching: 0
-});
 
 function App() {
     const [amplitudeA, setAmplitudeA] = useState(1.0);
@@ -16,6 +9,7 @@ function App() {
     const [dataA, setDataA] = useState([]);
     const [dataB, setDataB] = useState([]);
     const [fetchingInterval, setFetchingInterval] = useState(null);
+    const [selectedUnit, setSelectedUnit] = useState(ANGLE);
     const webSocket = useRef(null);
 
     useEffect(() => {
@@ -26,14 +20,8 @@ function App() {
 
         socket.onmessage = (event) => {
             const response = JSON.parse(event.data);
-            const dataA = response.dataA;
-            const dataB = response.dataB;
-            const imp2rad = 5.98364147543706e-9;
-            let fixedDataA = dataA.map(value => value * imp2rad);
-            let fixedDataB = dataB.map(value => value * imp2rad);
-            setDataA(prevState => [...prevState, ...fixedDataA]);
-            // setDataB(prevState => [...prevState, ...fixedDataB]);
-            setDataB(prevState => [...prevState, ...dataA]);
+            setDataA(prevState => [...prevState, ...response.dataA]);
+            setDataB(prevState => [...prevState, ...response.dataB]);
         };
 
         // socket.onerror = (error) => {
@@ -64,7 +52,7 @@ function App() {
         if (webSocket.current) {
             setFetchingInterval(setInterval(() => {
                 webSocket.current.send(START_FETCHING_JSON);
-            }, 1000));
+            }, 10));
         }
     };
 
@@ -76,13 +64,17 @@ function App() {
         }
     };
 
+    const handleUnitChange = (event) => {
+        setSelectedUnit(event.target.value);
+    };
+
     const downloadJsonFile = () => {
         const data = {
             dataA,
             dataB,
         };
         const jsonData = JSON.stringify(data, null, 2);
-        const blob = new Blob([jsonData], { type: 'application/json' });
+        const blob = new Blob([jsonData], {type: 'application/json'});
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = 'data.json';
@@ -111,9 +103,32 @@ function App() {
                 <button onClick={downloadJsonFile}>Download data</button>
                 {fetchingInterval === null && <button onClick={startFetching}>Start Fetching</button>}
                 {fetchingInterval && <button onClick={stopFetching}>Stop Fetching</button>}
+                <div>
+                    <input
+                        type="radio"
+                        value={ANGLE}
+                        checked={selectedUnit === ANGLE}
+                        onChange={handleUnitChange}
+                    />
+                    {ANGLE}
+                    <input
+                        type="radio"
+                        value={RAD}
+                        checked={selectedUnit === RAD}
+                        onChange={handleUnitChange}
+                    />
+                    {RAD}
+                    <input
+                        type="radio"
+                        value={RAW}
+                        checked={selectedUnit === RAW}
+                        onChange={handleUnitChange}
+                    />
+                    {RAW}
+                </div>
                 <div id="plot-container">
-                    <MyPlot y={dataA}/>
-                    <MyPlot y={dataB}/>
+                    <MyPlot y={dataA} unit={selectedUnit}/>
+                    <MyPlot y={dataB} unit={selectedUnit}/>
                 </div>
             </header>
         </div>
