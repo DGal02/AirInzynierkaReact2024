@@ -104,27 +104,36 @@ function App() {
                 {fetchingInterval === null && <button onClick={startFetching}>Start Fetching</button>}
                 {fetchingInterval && <button onClick={stopFetching}>Stop Fetching</button>}
                 <div>
-                    <input
-                        type="radio"
-                        value={ANGLE}
-                        checked={selectedUnit === ANGLE}
-                        onChange={handleUnitChange}
-                    />
-                    {ANGLE}
-                    <input
-                        type="radio"
-                        value={RAD}
-                        checked={selectedUnit === RAD}
-                        onChange={handleUnitChange}
-                    />
-                    {RAD}
-                    <input
-                        type="radio"
-                        value={RAW}
-                        checked={selectedUnit === RAW}
-                        onChange={handleUnitChange}
-                    />
-                    {RAW}
+                    <label>
+                        <input
+                            type="radio"
+                            name="unit"
+                            value={ANGLE}
+                            checked={selectedUnit === ANGLE}
+                            onChange={handleUnitChange}
+                        />
+                        {ANGLE}
+                    </label>
+                    <label>
+                        <input
+                            type="radio"
+                            name="unit"
+                            value={RAD}
+                            checked={selectedUnit === RAD}
+                            onChange={handleUnitChange}
+                        />
+                        {RAD}
+                    </label>
+                    <label>
+                        <input
+                            type="radio"
+                            name="unit"
+                            value={RAW}
+                            checked={selectedUnit === RAW}
+                            onChange={handleUnitChange}
+                        />
+                        {RAW}
+                    </label>
                 </div>
                 <div id="plot-container">
                     <MyPlot y={dataA} unit={selectedUnit}/>
