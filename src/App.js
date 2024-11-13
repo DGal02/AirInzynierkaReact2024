@@ -1,28 +1,22 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {createTheme, ThemeProvider} from '@mui/material/styles';
-import {Button, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, CssBaseline} from '@mui/material';
+import {ThemeProvider} from '@mui/material/styles';
+import {
+    Button,
+    Radio,
+    RadioGroup,
+    FormControlLabel,
+    FormControl,
+    FormLabel,
+    TextField, Box, Stack
+} from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import MyPlot from "./Plots/MyPlot";
-import {START_FETCHING_JSON, STOP_FETCHING_JSON, ANGLE, RAW, RAD} from './Util/AppHelper';
+import {START_FETCHING_JSON, STOP_FETCHING_JSON, ANGLE, RAW, RAD, isNumber, darkTheme} from './Util/AppHelper';
 import './App.css';
 
-const darkTheme = createTheme({
-    palette: {
-        mode: 'dark',
-        primary: {
-            main: '#90caf9',
-        },
-    },
-    typography: {
-        button: {
-            textTransform: 'none',
-        },
-    },
-});
-
 function App() {
-    const [amplitudeA, setAmplitudeA] = useState(undefined);
-    const [amplitudeB, setAmplitudeB] = useState(undefined);
+    const [positionA, setPositionA] = useState(undefined);
+    const [positionB, setPositionB] = useState(undefined);
     const [dataA, setDataA] = useState([]);
     const [dataB, setDataB] = useState([]);
     const [fetchingInterval, setFetchingInterval] = useState(null);
@@ -53,8 +47,8 @@ function App() {
     const sendMessageChange = () => {
         if (webSocket.current) {
             const messageStruct = {
-                amplitudeA: amplitudeA ? parseFloat(amplitudeA) : 1.0,
-                amplitudeB: amplitudeB ? parseFloat(amplitudeB) : 1.0,
+                amplitudeA: positionA ? parseFloat(positionA) : 1.0,
+                amplitudeB: positionB ? parseFloat(positionB) : 1.0,
             };
             webSocket.current.send(JSON.stringify(messageStruct));
         }
@@ -99,49 +93,67 @@ function App() {
         URL.revokeObjectURL(link.href);
     };
 
+    const isPositionAValid = !isNumber(positionA);
+    const isPositionBValid = !isNumber(positionB);
+
     return (
         <div className="App">
             <header className="App-header">
-                <h1>App interface</h1>
-                <input
-                    type="number"
-                    value={amplitudeA}
-                    onChange={(e) => setAmplitudeA(e.target.value)}
-                    placeholder="amplitude A"
-                />
-                <input
-                    type="number"
-                    value={amplitudeB}
-                    onChange={(e) => setAmplitudeB(e.target.value)}
-                    placeholder="amplitude B"
-                />
                 <ThemeProvider theme={darkTheme}>
-                    <div>
-                        <Button size="small" variant="outlined" onClick={sendMessageChange} endIcon={<SendIcon/>}>
-                            Send message
-                        </Button>
-                    </div>
+                    <Stack direction="row" spacing={2}>
+                        <TextField
+                            error={isPositionAValid}
+                            value={positionA}
+                            onChange={(e) => setPositionA(e.target.value)}
+                            label="Position A"
+                            variant="outlined"
+                            size="small"
+                            slotProps={{
+                                input: {
+                                    autoComplete: 'off',
+                                },
+                            }}
+                        />
+                        <TextField
+                            error={isPositionBValid}
+                            value={positionB}
+                            onChange={(e) => setPositionB(e.target.value)}
+                            label="Position B"
+                            variant="outlined"
+                            size="small"
+                            slotProps={{
+                                input: {
+                                    autoComplete: 'off',
+                                },
+                            }}
+                        />
+                    </Stack>
                 </ThemeProvider>
                 <ThemeProvider theme={darkTheme}>
-                    <div className="button-container">
+                    <Box marginTop={1}>
+                        <Button disabled={isPositionAValid || isPositionBValid} size="medium" variant="outlined"
+                                onClick={sendMessageChange} endIcon={<SendIcon/>}>
+                            Send message
+                        </Button>
+                    </Box>
+                </ThemeProvider>
+                <ThemeProvider theme={darkTheme}>
+                    <Box marginTop={1} display="flex" justifyContent="space-between" gap={1}>
                         <Button
-                            size="small"
+                            size="medium"
                             variant="outlined"
                             onClick={resetPlots}
                         >
                             Reset plots
                         </Button>
                         <Button
-                            size="small"
+                            size="medium"
                             variant="outlined"
                             onClick={downloadJsonFile}
                         >
                             Download data
                         </Button>
-                    </div>
-                </ThemeProvider>
-                <ThemeProvider theme={darkTheme}>
-                    <div style={{ display: 'flex', gap: '8px' }}>
+
                         <Button
                             size="small"
                             variant="outlined"
@@ -149,43 +161,51 @@ function App() {
                         >
                             {fetchingInterval === null ? "Start Fetching" : "Stop Fetching"}
                         </Button>
-                    </div>
+                        <Button
+                            size="medium"
+                            variant="outlined"
+                            onClick={fetchingInterval === null ? startFetching : stopFetching}
+                        >
+                            {fetchingInterval === null ? "Start engine" : "Stop engine"}
+                        </Button>
+                    </Box>
                 </ThemeProvider>
                 <ThemeProvider theme={darkTheme}>
-                    <CssBaseline/>
-                    <FormControl component="fieldset">
-                        <FormLabel
-                            component="legend"
-                            sx={{
-                                color: '#90CAF9',
-                            }}
-                        >
-                            Select Unit
-                        </FormLabel>
-                        <RadioGroup
-                            aria-label="unit"
-                            name="unit"
-                            value={selectedUnit}
-                            onChange={handleUnitChange}
-                            row
-                        >
-                            <FormControlLabel
-                                value={ANGLE}
-                                control={<Radio/>}
-                                label={ANGLE}
-                            />
-                            <FormControlLabel
-                                value={RAD}
-                                control={<Radio/>}
-                                label={RAD}
-                            />
-                            <FormControlLabel
-                                value={RAW}
-                                control={<Radio/>}
-                                label={RAW}
-                            />
-                        </RadioGroup>
-                    </FormControl>
+                    <Box marginTop={3}>
+                        <FormControl component="fieldset">
+                            <FormLabel
+                                component="legend"
+                                sx={{
+                                    color: '#90CAF9',
+                                }}
+                            >
+                                Select Unit
+                            </FormLabel>
+                            <RadioGroup
+                                aria-label="unit"
+                                name="unit"
+                                value={selectedUnit}
+                                onChange={handleUnitChange}
+                                row
+                            >
+                                <FormControlLabel
+                                    value={ANGLE}
+                                    control={<Radio/>}
+                                    label={ANGLE}
+                                />
+                                <FormControlLabel
+                                    value={RAD}
+                                    control={<Radio/>}
+                                    label={RAD}
+                                />
+                                <FormControlLabel
+                                    value={RAW}
+                                    control={<Radio/>}
+                                    label={RAW}
+                                />
+                            </RadioGroup>
+                        </FormControl>
+                    </Box>
                 </ThemeProvider>
                 <div id="plot-container">
                     <MyPlot y={dataA} unit={selectedUnit}/>

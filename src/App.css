@@ -31,8 +31,3 @@
 #plot-container {
   display: flex;
 }
-
-.button-container {
-  display: flex;
-  gap: 8px;
-}

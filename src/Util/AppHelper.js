@@ -1,3 +1,5 @@
+import {createTheme} from "@mui/material/styles";
+
 export const START_FETCHING_JSON = JSON.stringify({
     isFetching: 1
 });
@@ -61,3 +63,23 @@ export const transformUnitLabelToUnit = (unit) => {
             return "j";
     }
 };
+
+export const isNumber = (number) => {
+    const numberParsed = parseFloat(number);
+
+    return !isNaN(numberParsed) && typeof numberParsed === "number";
+};
+
+export const darkTheme = createTheme({
+    palette: {
+        mode: 'dark',
+        primary: {
+            main: '#90caf9',
+        },
+    },
+    typography: {
+        button: {
+            textTransform: 'none',
+        },
+    },
+});
