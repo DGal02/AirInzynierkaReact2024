@@ -1,11 +1,28 @@
 import React, {useEffect, useState, useRef} from 'react';
+import {createTheme, ThemeProvider} from '@mui/material/styles';
+import {Button, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, CssBaseline} from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
 import MyPlot from "./Plots/MyPlot";
 import {START_FETCHING_JSON, STOP_FETCHING_JSON, ANGLE, RAW, RAD} from './Util/AppHelper';
 import './App.css';
 
+const darkTheme = createTheme({
+    palette: {
+        mode: 'dark',
+        primary: {
+            main: '#90caf9',
+        },
+    },
+    typography: {
+        button: {
+            textTransform: 'none',
+        },
+    },
+});
+
 function App() {
-    const [amplitudeA, setAmplitudeA] = useState(1.0);
-    const [amplitudeB, setAmplitudeB] = useState(1.0);
+    const [amplitudeA, setAmplitudeA] = useState(undefined);
+    const [amplitudeB, setAmplitudeB] = useState(undefined);
     const [dataA, setDataA] = useState([]);
     const [dataB, setDataB] = useState([]);
     const [fetchingInterval, setFetchingInterval] = useState(null);
@@ -85,7 +102,7 @@ function App() {
     return (
         <div className="App">
             <header className="App-header">
-                <h1>WebSocket Client</h1>
+                <h1>App interface</h1>
                 <input
                     type="number"
                     value={amplitudeA}
@@ -98,43 +115,78 @@ function App() {
                     onChange={(e) => setAmplitudeB(e.target.value)}
                     placeholder="amplitude B"
                 />
-                <button onClick={sendMessageChange}>Send Message</button>
-                <button onClick={resetPlots}>Reset plots</button>
-                <button onClick={downloadJsonFile}>Download data</button>
-                {fetchingInterval === null && <button onClick={startFetching}>Start Fetching</button>}
-                {fetchingInterval && <button onClick={stopFetching}>Stop Fetching</button>}
-                <div>
-                    <label>
-                        <input
-                            type="radio"
+                <ThemeProvider theme={darkTheme}>
+                    <div>
+                        <Button size="small" variant="outlined" onClick={sendMessageChange} endIcon={<SendIcon/>}>
+                            Send message
+                        </Button>
+                    </div>
+                </ThemeProvider>
+                <ThemeProvider theme={darkTheme}>
+                    <div className="button-container">
+                        <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={resetPlots}
+                        >
+                            Reset plots
+                        </Button>
+                        <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={downloadJsonFile}
+                        >
+                            Download data
+                        </Button>
+                    </div>
+                </ThemeProvider>
+                <ThemeProvider theme={darkTheme}>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                        <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={fetchingInterval === null ? startFetching : stopFetching}
+                        >
+                            {fetchingInterval === null ? "Start Fetching" : "Stop Fetching"}
+                        </Button>
+                    </div>
+                </ThemeProvider>
+                <ThemeProvider theme={darkTheme}>
+                    <CssBaseline/>
+                    <FormControl component="fieldset">
+                        <FormLabel
+                            component="legend"
+                            sx={{
+                                color: '#90CAF9',
+                            }}
+                        >
+                            Select Unit
+                        </FormLabel>
+                        <RadioGroup
+                            aria-label="unit"
                             name="unit"
-                            value={ANGLE}
-                            checked={selectedUnit === ANGLE}
+                            value={selectedUnit}
                             onChange={handleUnitChange}
-                        />
-                        {ANGLE}
-                    </label>
-                    <label>
-                        <input
-                            type="radio"
-                            name="unit"
-                            value={RAD}
-                            checked={selectedUnit === RAD}
-                            onChange={handleUnitChange}
-                        />
-                        {RAD}
-                    </label>
-                    <label>
-                        <input
-                            type="radio"
-                            name="unit"
-                            value={RAW}
-                            checked={selectedUnit === RAW}
-                            onChange={handleUnitChange}
-                        />
-                        {RAW}
-                    </label>
-                </div>
+                            row
+                        >
+                            <FormControlLabel
+                                value={ANGLE}
+                                control={<Radio/>}
+                                label={ANGLE}
+                            />
+                            <FormControlLabel
+                                value={RAD}
+                                control={<Radio/>}
+                                label={RAD}
+                            />
+                            <FormControlLabel
+                                value={RAW}
+                                control={<Radio/>}
+                                label={RAW}
+                            />
+                        </RadioGroup>
+                    </FormControl>
+                </ThemeProvider>
                 <div id="plot-container">
                     <MyPlot y={dataA} unit={selectedUnit}/>
                     <MyPlot y={dataB} unit={selectedUnit}/>

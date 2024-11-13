@@ -17,8 +17,8 @@ export const RAW_TO_ANGLE = "3.428374026619764e-7";
 export const RAW_TO_RAD = "5.98364147543706e-9";
 
 export const INITIAL_LAYOUT_OPTIONS = {
-    paper_bgcolor: '#282c34',
-    plot_bgcolor: '#282c34',
+    paper_bgcolor: '#0F1214',
+    plot_bgcolor: '#0F1214',
     xaxis: {
         title: 'Time [s]',
         color: 'white',
