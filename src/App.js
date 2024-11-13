@@ -128,16 +128,12 @@ function App() {
                             }}
                         />
                     </Stack>
-                </ThemeProvider>
-                <ThemeProvider theme={darkTheme}>
                     <Box marginTop={1}>
                         <Button disabled={isPositionAValid || isPositionBValid} size="medium" variant="outlined"
                                 onClick={sendMessageChange} endIcon={<SendIcon/>}>
                             Send message
                         </Button>
                     </Box>
-                </ThemeProvider>
-                <ThemeProvider theme={darkTheme}>
                     <Box marginTop={1} display="flex" justifyContent="space-between" gap={1}>
                         <Button
                             size="medium"
@@ -169,8 +165,6 @@ function App() {
                             {fetchingInterval === null ? "Start engine" : "Stop engine"}
                         </Button>
                     </Box>
-                </ThemeProvider>
-                <ThemeProvider theme={darkTheme}>
                     <Box marginTop={3}>
                         <FormControl component="fieldset">
                             <FormLabel
