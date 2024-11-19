@@ -8,6 +8,14 @@ export const STOP_FETCHING_JSON = JSON.stringify({
     isFetching: 0
 });
 
+export const START_ENGINE_JSON = JSON.stringify({
+    isEngineEnabled: 1
+});
+
+export const STOP_ENGINE_JSON = JSON.stringify({
+    isEngineEnabled: 0
+});
+
 export const RAW = "Raw";
 
 export const ANGLE = "Angle";

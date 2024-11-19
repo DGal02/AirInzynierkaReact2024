@@ -11,7 +11,17 @@ import {
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import MyPlot from "./Plots/MyPlot";
-import {START_FETCHING_JSON, STOP_FETCHING_JSON, ANGLE, RAW, RAD, isNumber, darkTheme} from './Util/AppHelper';
+import {
+    START_FETCHING_JSON,
+    STOP_FETCHING_JSON,
+    START_ENGINE_JSON,
+    STOP_ENGINE_JSON,
+    ANGLE,
+    RAW,
+    RAD,
+    isNumber,
+    darkTheme
+} from './Util/AppHelper';
 import './App.css';
 
 function App() {
@@ -20,6 +30,7 @@ function App() {
     const [dataA, setDataA] = useState([]);
     const [dataB, setDataB] = useState([]);
     const [fetchingInterval, setFetchingInterval] = useState(null);
+    const [isEngineEnabled, setIsEngineEnabled] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState(ANGLE);
     const webSocket = useRef(null);
 
@@ -63,7 +74,7 @@ function App() {
         if (webSocket.current) {
             setFetchingInterval(setInterval(() => {
                 webSocket.current.send(START_FETCHING_JSON);
-            }, 10));
+            }, 200));
         }
     };
 
@@ -73,6 +84,20 @@ function App() {
             clearInterval(fetchingInterval);
             setFetchingInterval(null);
         }
+    };
+
+    const startEngine = () => {
+        if (webSocket.current) {
+            webSocket.current.send(START_ENGINE_JSON);
+            setIsEngineEnabled(true);
+        }
+    };
+
+    const stopEngine = () => {
+      if (webSocket.current) {
+          webSocket.current.send(STOP_ENGINE_JSON);
+          setIsEngineEnabled(false);
+      }
     };
 
     const handleUnitChange = (event) => {
@@ -160,9 +185,9 @@ function App() {
                         <Button
                             size="medium"
                             variant="outlined"
-                            onClick={fetchingInterval === null ? startFetching : stopFetching}
+                            onClick={!isEngineEnabled ? startEngine : stopEngine}
                         >
-                            {fetchingInterval === null ? "Start engine" : "Stop engine"}
+                            {!isEngineEnabled ? "Start engine" : "Stop engine"}
                         </Button>
                     </Box>
                     <Box marginTop={3}>
