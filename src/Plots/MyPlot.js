@@ -28,7 +28,7 @@ const MyPlot = ({y, unit}) => {
             {
                 // x: Array.from({length: y.length}, (_, index) => index / 1), // Oś X
                 y: yData,
-                type: 'scatter',
+                type: 'scattergl',
                 mode: 'lines+markers',
                 marker: {color: 'red'},
             }
