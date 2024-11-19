@@ -1,35 +1,33 @@
-import React, {useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import Plot from 'react-plotly.js';
+import {
+    INITIAL_LAYOUT_OPTIONS,
+    ANGLE,
+    RAD,
+    RAW,
+    transformRawToAngle,
+    transformRawToRad,
+    transformUnitLabelToUnit,
+} from '../Util/AppHelper';
 
-const layout = {
-    paper_bgcolor: '#282c34',
-    plot_bgcolor: '#282c34',
-    xaxis: {
-        title: 'Time [s]',
-        color: 'white',
-        gridcolor: '#444',
-    },
-    yaxis: {
-        title: 'Position [cm]',
-        color: 'white',
-        gridcolor: '#444',
-    },
-    title: {
-        text: 'Position of the rotor',
-        font: {
-            size: 20,
-            color: 'white'
+const MyPlot = ({y, unit}) => {
+    const [plotLayout, setPlotLayout] = useState(structuredClone(INITIAL_LAYOUT_OPTIONS));
+
+    const yData = useMemo(() => {
+        switch (unit) {
+            case ANGLE:
+                return transformRawToAngle(y);
+            case RAD:
+                return transformRawToRad(y);
+            case RAW:
+            default:
+                return y;
         }
-    }
-};
-
-const MyPlot = ({y}) => {
-    const [plotLayout, setPlotLayout] = useState(structuredClone(layout));
-    const plotData =
-        [
+    }, [y.length, plotLayout.yaxis.title.text]);
+    const plotData = [
             {
-                x: Array.from({length: y.length}, (_, index) => index / 1), // Oś X
-                y,
+                // x: Array.from({length: y.length}, (_, index) => index / 1), // Oś X
+                y: yData,
                 type: 'scatter',
                 mode: 'lines+markers',
                 marker: {color: 'red'},
@@ -47,12 +45,27 @@ const MyPlot = ({y}) => {
         }
 
         setPlotLayout((prevState) => {
-           return {
-               ...prevState,
-               ...figure,
-           };
+            return {
+                ...prevState,
+                ...figure,
+            };
         });
     };
+
+    useEffect(() => {
+        setPlotLayout((prevState) => {
+            let yAxisData = structuredClone(prevState.yaxis);
+            yAxisData.title = {
+                ...yAxisData.title,
+                text: `Position [${transformUnitLabelToUnit(unit)}]`,
+            }
+
+            return {
+                ...prevState,
+                yaxis: yAxisData,
+            };
+        });
+    }, [unit]);
 
     return (
         <Plot

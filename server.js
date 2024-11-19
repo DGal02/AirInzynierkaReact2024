@@ -1,9 +1,13 @@
 const WebSocket = require('ws');
 const net = require('net');
 
-const wss = new WebSocket.Server({ port: 8080 });
+const wss = new WebSocket.Server({port: 8080});
 const STM32_HOST = '192.168.1.10';
 const STM32_PORT = 5002;
+
+const DEBUG = 'debug';
+const NONE = 'none';
+const logLevel = DEBUG;
 
 wss.on('connection', (ws) => {
     console.log('WebSocket connection established');
@@ -13,12 +17,16 @@ wss.on('connection', (ws) => {
     });
 
     ws.on('message', (message) => {
-        console.log('Received from browser:', message);
+        if (logLevel === DEBUG) {
+            console.log('Received from browser:', message);
+        }
         client.write(message);
     });
 
     client.on('data', (data) => {
-        console.log('Received from STM32:', data.toString());
+        if (logLevel === DEBUG) {
+            console.log('Received from STM32:', data.toString());
+        }
         ws.send(data.toString());
     });
 
