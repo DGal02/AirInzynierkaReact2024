@@ -72,6 +72,18 @@ export const transformUnitLabelToUnit = (unit) => {
     }
 };
 
+export const transformPositionToRaw = (unit, position) => {
+    switch (unit) {
+        case ANGLE:
+            return parseInt(parseFloat(position) / RAW_TO_ANGLE);
+        case RAD:
+            return parseInt(parseFloat(position) / RAW_TO_RAD);
+        case RAW:
+        default:
+            return parseInt(position);
+    }
+};
+
 export const isNumber = (number) => {
     const numberParsed = parseFloat(number);
 

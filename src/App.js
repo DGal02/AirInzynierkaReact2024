@@ -20,7 +20,7 @@ import {
     RAW,
     RAD,
     isNumber,
-    darkTheme
+    darkTheme, transformPositionToRaw
 } from './Util/AppHelper';
 import './App.css';
 
@@ -58,7 +58,7 @@ function App() {
     const sendMessageChange = () => {
         if (webSocket.current) {
             const messageStruct = {
-                amplitudeA: positionA ? parseFloat(positionA) : 1.0,
+                amplitudeA: transformPositionToRaw(selectedUnit, positionA),
                 amplitudeB: positionB ? parseFloat(positionB) : 1.0,
             };
             webSocket.current.send(JSON.stringify(messageStruct));
@@ -178,6 +178,7 @@ function App() {
                         <Button
                             size="small"
                             variant="outlined"
+                            color={!fetchingInterval ? "primary" : "success"}
                             onClick={fetchingInterval === null ? startFetching : stopFetching}
                         >
                             {fetchingInterval === null ? "Start Fetching" : "Stop Fetching"}
@@ -185,6 +186,7 @@ function App() {
                         <Button
                             size="medium"
                             variant="outlined"
+                            color={!isEngineEnabled ? "primary" : "success"}
                             onClick={!isEngineEnabled ? startEngine : stopEngine}
                         >
                             {!isEngineEnabled ? "Start engine" : "Stop engine"}
