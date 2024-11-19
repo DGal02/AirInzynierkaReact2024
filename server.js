@@ -7,7 +7,8 @@ const STM32_PORT = 5002;
 
 const DEBUG = 'debug';
 const NONE = 'none';
-const logLevel = DEBUG;
+const logLevel = NONE;
+let buffer = '';
 
 wss.on('connection', (ws) => {
     console.log('WebSocket connection established');
@@ -24,10 +25,15 @@ wss.on('connection', (ws) => {
     });
 
     client.on('data', (data) => {
-        if (logLevel === DEBUG) {
-            console.log('Received from STM32:', data.toString());
+        buffer += data.toString();
+        if (buffer[buffer.length - 1] === '}') {
+            if (logLevel === DEBUG) {
+                console.log('Received from STM32:', buffer);
+            }
+
+            ws.send(buffer);
+            buffer = '';
         }
-        ws.send(data.toString());
     });
 
     client.on('close', () => {
