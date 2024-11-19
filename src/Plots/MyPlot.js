@@ -5,6 +5,7 @@ import {
     ANGLE,
     RAD,
     RAW,
+    timeStep,
     transformRawToAngle,
     transformRawToRad,
     transformUnitLabelToUnit,
@@ -12,6 +13,7 @@ import {
 
 const MyPlot = ({y, unit}) => {
     const [plotLayout, setPlotLayout] = useState(structuredClone(INITIAL_LAYOUT_OPTIONS));
+    const [xData, setXData] = useState([]);  // Stan dla osi X
 
     const yData = useMemo(() => {
         switch (unit) {
@@ -24,9 +26,10 @@ const MyPlot = ({y, unit}) => {
                 return y;
         }
     }, [y.length, plotLayout.yaxis.title.text]);
+
     const plotData = [
             {
-                // x: Array.from({length: y.length}, (_, index) => index / 1), // Oś X
+                x: xData,
                 y: yData,
                 type: 'scattergl',
                 mode: 'lines+markers',
@@ -66,6 +69,16 @@ const MyPlot = ({y, unit}) => {
             };
         });
     }, [unit]);
+
+    useEffect(() => {
+        const newXData = [...xData];
+        const startIndex = xData.length;
+        for (let i = startIndex; i < y.length; i++) {
+            newXData.push(i * timeStep);
+        }
+
+        setXData(newXData);
+    }, [y.length]);
 
     return (
         <Plot

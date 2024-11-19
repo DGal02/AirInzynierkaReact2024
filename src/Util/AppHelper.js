@@ -26,6 +26,10 @@ export const RAW_TO_ANGLE = "3.428374026619764e-7";
 
 export const RAW_TO_RAD = "5.98364147543706e-9";
 
+export const sampleRate = 10000;
+
+export const timeStep = 1 / sampleRate;
+
 export const INITIAL_LAYOUT_OPTIONS = {
     paper_bgcolor: '#0F1214',
     plot_bgcolor: '#0F1214',
