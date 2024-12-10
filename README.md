@@ -12,3 +12,9 @@ Runs websocket on  localhost:8080, to communicate with STM32 (192.168.1.10:5001)
 Runs the app in the development mode.
 Open http://localhost:3000 to view it in your browser. If port is already taken terminal will show you available port.
 ### `npm start`
+# How to build project
+### `npm run build`
+To download package for running http server
+### `npm install -g serve`
+To run a http server after building application
+### `serve -s build`
