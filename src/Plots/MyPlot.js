@@ -13,7 +13,7 @@ import {
 
 const MyPlot = ({y, unit}) => {
     const [plotLayout, setPlotLayout] = useState(structuredClone(INITIAL_LAYOUT_OPTIONS));
-    const [xData, setXData] = useState([]);  // Stan dla osi X
+    const [xData, setXData] = useState([]);
 
     const yData = useMemo(() => {
         switch (unit) {

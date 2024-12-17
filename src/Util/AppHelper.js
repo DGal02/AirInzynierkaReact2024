@@ -22,6 +22,18 @@ export const ANGLE = "Angle";
 
 export const RAD = "Rad";
 
+export const POINT_LABEL = 'Point';
+
+export const POINT_VALUE = 0;
+
+export const SIN_LABEL = 'Sinus';
+
+export const SIN_VALUE = 1;
+
+export const SQUARE_LABEL = 'Square';
+
+export const SQUARE_VALUE = 2;
+
 export const RAW_TO_ANGLE = "3.428374026619764e-7";
 
 export const RAW_TO_RAD = "5.98364147543706e-9";
@@ -107,3 +119,9 @@ export const darkTheme = createTheme({
         },
     },
 });
+
+export const GET_MODE_JSON = (value) => {
+    return JSON.stringify({
+        mode: value
+    });
+}

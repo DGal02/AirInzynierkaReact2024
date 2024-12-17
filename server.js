@@ -3,7 +3,7 @@ const net = require('net');
 
 const wss = new WebSocket.Server({port: 8080});
 const STM32_HOST = '192.168.1.10';
-const STM32_PORT = 5002;
+const STM32_PORT = 5003;
 
 const DEBUG = 'debug';
 const NONE = 'none';
@@ -26,13 +26,15 @@ wss.on('connection', (ws) => {
 
     client.on('data', (data) => {
         buffer += data.toString();
-        if (buffer[buffer.length - 1] === '}') {
+        let endIdx;
+        while ((endIdx = buffer.indexOf('}')) !== -1) {
+            const completeMessage = buffer.slice(0, endIdx + 1);
             if (logLevel === DEBUG) {
-                console.log('Received from STM32:', buffer);
+                console.log('Received from STM32:', completeMessage);
             }
 
-            ws.send(buffer);
-            buffer = '';
+            ws.send(completeMessage);
+            buffer = buffer.slice(endIdx + 1);
         }
     });
 

@@ -16,22 +16,31 @@ import {
     STOP_FETCHING_JSON,
     START_ENGINE_JSON,
     STOP_ENGINE_JSON,
+    POINT_LABEL,
+    POINT_VALUE,
+    SIN_LABEL,
+    SIN_VALUE,
+    SQUARE_LABEL,
+    SQUARE_VALUE,
+    GET_MODE_JSON,
     ANGLE,
     RAW,
     RAD,
     isNumber,
-    darkTheme, transformPositionToRaw
+    darkTheme,
+    transformPositionToRaw
 } from './Util/AppHelper';
 import './App.css';
 
 function App() {
-    const [positionA, setPositionA] = useState(undefined);
-    const [positionB, setPositionB] = useState(undefined);
+    const [positionA, setPositionA] = useState('');
+    const [positionB, setPositionB] = useState('');
     const [dataA, setDataA] = useState([]);
     const [dataB, setDataB] = useState([]);
     const [fetchingInterval, setFetchingInterval] = useState(null);
     const [isEngineEnabled, setIsEngineEnabled] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState(ANGLE);
+    const [selectedMode, setSelectedMode] = useState(POINT_VALUE);
     const webSocket = useRef(null);
 
     useEffect(() => {
@@ -41,9 +50,13 @@ function App() {
         };
 
         socket.onmessage = (event) => {
-            const response = JSON.parse(event.data);
-            setDataA(prevState => [...prevState, ...response.dataA]);
-            setDataB(prevState => [...prevState, ...response.dataB]);
+            try {
+                const response = JSON.parse(event.data);
+                setDataA(prevState => [...prevState, ...response.dataA]);
+                setDataB(prevState => [...prevState, ...response.dataB]);
+            } catch (e) {
+                console.log(event.data);
+            }
         };
 
         // socket.onerror = (error) => {
@@ -94,14 +107,22 @@ function App() {
     };
 
     const stopEngine = () => {
-      if (webSocket.current) {
-          webSocket.current.send(STOP_ENGINE_JSON);
-          setIsEngineEnabled(false);
-      }
+        if (webSocket.current) {
+            webSocket.current.send(STOP_ENGINE_JSON);
+            setIsEngineEnabled(false);
+        }
     };
 
     const handleUnitChange = (event) => {
         setSelectedUnit(event.target.value);
+    };
+
+    const handleModeChange = (event) => {
+        const value = parseInt(event.target.value);
+        setSelectedMode(value);
+        if (webSocket.current) {
+            webSocket.current.send(GET_MODE_JSON(value));
+        }
     };
 
     const downloadJsonFile = () => {
@@ -125,73 +146,6 @@ function App() {
         <div className="App">
             <header className="App-header">
                 <ThemeProvider theme={darkTheme}>
-                    <Stack direction="row" spacing={2}>
-                        <TextField
-                            error={isPositionAValid}
-                            value={positionA}
-                            onChange={(e) => setPositionA(e.target.value)}
-                            label="Position A"
-                            variant="outlined"
-                            size="small"
-                            slotProps={{
-                                input: {
-                                    autoComplete: 'off',
-                                },
-                            }}
-                        />
-                        <TextField
-                            error={isPositionBValid}
-                            value={positionB}
-                            onChange={(e) => setPositionB(e.target.value)}
-                            label="Position B"
-                            variant="outlined"
-                            size="small"
-                            slotProps={{
-                                input: {
-                                    autoComplete: 'off',
-                                },
-                            }}
-                        />
-                    </Stack>
-                    <Box marginTop={1}>
-                        <Button disabled={isPositionAValid || isPositionBValid} size="medium" variant="outlined"
-                                onClick={sendMessageChange} endIcon={<SendIcon/>}>
-                            Send message
-                        </Button>
-                    </Box>
-                    <Box marginTop={1} display="flex" justifyContent="space-between" gap={1}>
-                        <Button
-                            size="medium"
-                            variant="outlined"
-                            onClick={resetPlots}
-                        >
-                            Reset plots
-                        </Button>
-                        <Button
-                            size="medium"
-                            variant="outlined"
-                            onClick={downloadJsonFile}
-                        >
-                            Download data
-                        </Button>
-
-                        <Button
-                            size="small"
-                            variant="outlined"
-                            color={!fetchingInterval ? "primary" : "success"}
-                            onClick={fetchingInterval === null ? startFetching : stopFetching}
-                        >
-                            {fetchingInterval === null ? "Start Fetching" : "Stop Fetching"}
-                        </Button>
-                        <Button
-                            size="medium"
-                            variant="outlined"
-                            color={!isEngineEnabled ? "primary" : "success"}
-                            onClick={!isEngineEnabled ? startEngine : stopEngine}
-                        >
-                            {!isEngineEnabled ? "Start engine" : "Stop engine"}
-                        </Button>
-                    </Box>
                     <Box marginTop={3}>
                         <FormControl component="fieldset">
                             <FormLabel
@@ -226,6 +180,111 @@ function App() {
                                 />
                             </RadioGroup>
                         </FormControl>
+                    </Box>
+                    <Box marginTop={3}>
+                        <FormControl component="fieldset">
+                            <FormLabel
+                                component="legend"
+                                sx={{
+                                    color: '#90CAF9',
+                                }}
+                            >
+                                Select mode
+                            </FormLabel>
+                            <RadioGroup
+                                aria-label="unit"
+                                name="unit"
+                                value={selectedMode}
+                                onChange={handleModeChange}
+                                row
+                            >
+                                <FormControlLabel
+                                    value={POINT_VALUE}
+                                    control={<Radio/>}
+                                    label={POINT_LABEL}
+                                />
+                                <FormControlLabel
+                                    value={SIN_VALUE}
+                                    control={<Radio/>}
+                                    label={SIN_LABEL}
+                                />
+                                <FormControlLabel
+                                    value={SQUARE_VALUE}
+                                    control={<Radio/>}
+                                    label={SQUARE_LABEL}
+                                />
+                            </RadioGroup>
+                        </FormControl>
+                    </Box>
+                    {selectedMode === POINT_VALUE &&
+                        <div>
+                            <Stack direction="row" spacing={2}>
+                                <TextField
+                                    error={isPositionAValid}
+                                    value={positionA}
+                                    onChange={(e) => setPositionA(e.target.value)}
+                                    label="Position A"
+                                    variant="outlined"
+                                    size="small"
+                                    slotProps={{
+                                        input: {
+                                            autoComplete: 'off',
+                                        },
+                                    }}
+                                />
+                                <TextField
+                                    error={isPositionBValid}
+                                    value={positionB}
+                                    onChange={(e) => setPositionB(e.target.value)}
+                                    label="Position B"
+                                    variant="outlined"
+                                    size="small"
+                                    slotProps={{
+                                        input: {
+                                            autoComplete: 'off',
+                                        },
+                                    }}
+                                />
+                            </Stack>
+                            <Box marginTop={1}>
+                                <Button disabled={isPositionAValid || isPositionBValid} size="medium" variant="outlined"
+                                        onClick={sendMessageChange} endIcon={<SendIcon/>}>
+                                    Send message
+                                </Button>
+                            </Box>
+                        </div>}
+                    <Box marginTop={2} display="flex" justifyContent="space-between" gap={1}>
+                        <Button
+                            size="medium"
+                            variant="outlined"
+                            onClick={resetPlots}
+                        >
+                            Reset plots
+                        </Button>
+                        <Button
+                            size="medium"
+                            variant="outlined"
+                            onClick={downloadJsonFile}
+                        >
+                            Download data
+                        </Button>
+
+                        <Button
+                            size="small"
+                            variant="outlined"
+                            color={!fetchingInterval ? "primary" : "success"}
+                            onClick={fetchingInterval === null ? startFetching : stopFetching}
+                        >
+                            {fetchingInterval === null ? "Start Fetching" : "Stop Fetching"}
+                        </Button>
+                        <Button
+                            size="medium"
+                            variant="outlined"
+                            color={!isEngineEnabled ? "primary" : "success"}
+                            onClick={!isEngineEnabled ? startEngine : stopEngine}
+                        >
+                            {!isEngineEnabled ? "Start engine" : "Stop engine"}
+                        </Button>
                     </Box>
                 </ThemeProvider>
                 <div id="plot-container">
