@@ -37,6 +37,8 @@ function App() {
     const [positionB, setPositionB] = useState('');
     const [dataA, setDataA] = useState([]);
     const [dataB, setDataB] = useState([]);
+    const [dataErrorA, setDataErrorA] = useState([]);
+    const [dataErrorB, setDataErrorB] = useState([]);
     const [fetchingInterval, setFetchingInterval] = useState(null);
     const [isEngineEnabled, setIsEngineEnabled] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState(ANGLE);
@@ -54,6 +56,8 @@ function App() {
                 const response = JSON.parse(event.data);
                 setDataA(prevState => [...prevState, ...response.dataA]);
                 setDataB(prevState => [...prevState, ...response.dataB]);
+                setDataErrorA(prevState => [...prevState, ...response.dataErrorA]);
+                setDataErrorB(prevState => [...prevState, ...response.dataErrorB]);
             } catch (e) {
                 console.log(event.data);
             }
@@ -81,6 +85,7 @@ function App() {
     const resetPlots = () => {
         setDataA([]);
         setDataB([]);
+        setDataErrorA([]);
     };
 
     const startFetching = () => {
@@ -129,6 +134,8 @@ function App() {
         const data = {
             dataA,
             dataB,
+            dataErrorA,
+            dataErrorB,
         };
         const jsonData = JSON.stringify(data, null, 2);
         const blob = new Blob([jsonData], {type: 'application/json'});
@@ -287,9 +294,15 @@ function App() {
                         </Button>
                     </Box>
                 </ThemeProvider>
-                <div id="plot-container">
-                    <MyPlot y={dataA} unit={selectedUnit}/>
-                    <MyPlot y={dataB} unit={selectedUnit}/>
+                <div>
+                    <div className="plot-container">
+                        <MyPlot y={dataA} unit={selectedUnit}/>
+                        <MyPlot y={dataErrorA} unit={selectedUnit}/>
+                    </div>
+                    <div className="plot-container">
+                        <MyPlot y={dataB} unit={selectedUnit}/>
+                        <MyPlot y={dataErrorB} unit={selectedUnit}/>
+                    </div>
                 </div>
             </header>
         </div>

@@ -28,6 +28,9 @@
   color: #61dafb;
 }
 
-#plot-container {
+.plot-container {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 }
