@@ -76,7 +76,7 @@ function App() {
         if (webSocket.current) {
             const messageStruct = {
                 positionA: transformPositionToRaw(selectedUnit, positionA),
-                positionB: positionB ? parseFloat(positionB) : 1.0,
+                positionB: transformPositionToRaw(selectedUnit, positionB),
             };
             webSocket.current.send(JSON.stringify(messageStruct));
         }
@@ -86,6 +86,7 @@ function App() {
         setDataA([]);
         setDataB([]);
         setDataErrorA([]);
+        setDataErrorB([]);
     };
 
     const startFetching = () => {
