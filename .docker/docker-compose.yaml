@@ -1,0 +1,17 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .docker/Dockerfile
+    ports:
+      - "8080:8080"
+      - "3000:3000"
+    working_dir: /app
+    restart: always
+    container_name: app_container
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
