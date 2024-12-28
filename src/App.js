@@ -2,39 +2,26 @@ import React, {useEffect, useState, useRef} from 'react';
 import {ThemeProvider} from '@mui/material/styles';
 import {
     Button,
-    Radio,
-    RadioGroup,
-    FormControlLabel,
-    FormControl,
-    FormLabel,
-    TextField, Box, Stack
+    Box,
 } from '@mui/material';
-import SendIcon from '@mui/icons-material/Send';
 import MyPlot from "./Plots/MyPlot";
 import {
     START_FETCHING_JSON,
     STOP_FETCHING_JSON,
     START_ENGINE_JSON,
     STOP_ENGINE_JSON,
-    POINT_LABEL,
     POINT_VALUE,
-    SIN_LABEL,
-    SIN_VALUE,
-    SQUARE_LABEL,
-    SQUARE_VALUE,
     GET_MODE_JSON,
     ANGLE,
-    RAW,
-    RAD,
-    isNumber,
     darkTheme,
     transformPositionToRaw
 } from './Util/AppHelper';
 import './App.css';
+import RadioForm from "./Form/RadioForm";
+import {MODE_OPTIONS, UNIT_OPTIONS} from "./Util/FormHelper";
+import PointInput from "./Form/PointInput";
 
 function App() {
-    const [positionA, setPositionA] = useState('');
-    const [positionB, setPositionB] = useState('');
     const [dataA, setDataA] = useState([]);
     const [dataB, setDataB] = useState([]);
     const [dataErrorA, setDataErrorA] = useState([]);
@@ -72,7 +59,7 @@ function App() {
         };
     }, []);
 
-    const sendMessageChange = () => {
+    const sendMessagePosition = (positionA, positionB) => {
         if (webSocket.current) {
             const messageStruct = {
                 positionA: transformPositionToRaw(selectedUnit, positionA),
@@ -147,120 +134,27 @@ function App() {
         URL.revokeObjectURL(link.href);
     };
 
-    const isPositionAValid = !isNumber(positionA);
-    const isPositionBValid = !isNumber(positionB);
-
     return (
         <div className="App">
             <header className="App-header">
                 <ThemeProvider theme={darkTheme}>
-                    <Box marginTop={3}>
-                        <FormControl component="fieldset">
-                            <FormLabel
-                                component="legend"
-                                sx={{
-                                    color: '#90CAF9',
-                                }}
-                            >
-                                Select Unit
-                            </FormLabel>
-                            <RadioGroup
-                                aria-label="unit"
-                                name="unit"
-                                value={selectedUnit}
-                                onChange={handleUnitChange}
-                                row
-                            >
-                                <FormControlLabel
-                                    value={ANGLE}
-                                    control={<Radio/>}
-                                    label={ANGLE}
-                                />
-                                <FormControlLabel
-                                    value={RAD}
-                                    control={<Radio/>}
-                                    label={RAD}
-                                />
-                                <FormControlLabel
-                                    value={RAW}
-                                    control={<Radio/>}
-                                    label={RAW}
-                                />
-                            </RadioGroup>
-                        </FormControl>
-                    </Box>
-                    <Box marginTop={3}>
-                        <FormControl component="fieldset">
-                            <FormLabel
-                                component="legend"
-                                sx={{
-                                    color: '#90CAF9',
-                                }}
-                            >
-                                Select mode
-                            </FormLabel>
-                            <RadioGroup
-                                aria-label="unit"
-                                name="unit"
-                                value={selectedMode}
-                                onChange={handleModeChange}
-                                row
-                            >
-                                <FormControlLabel
-                                    value={POINT_VALUE}
-                                    control={<Radio/>}
-                                    label={POINT_LABEL}
-                                />
-                                <FormControlLabel
-                                    value={SIN_VALUE}
-                                    control={<Radio/>}
-                                    label={SIN_LABEL}
-                                />
-                                <FormControlLabel
-                                    value={SQUARE_VALUE}
-                                    control={<Radio/>}
-                                    label={SQUARE_LABEL}
-                                />
-                            </RadioGroup>
-                        </FormControl>
-                    </Box>
+                    <RadioForm
+                        name="unit"
+                        description="Select Unit"
+                        value={selectedUnit}
+                        handler={handleUnitChange}
+                        options={UNIT_OPTIONS}
+                    />
+                    <RadioForm
+                        name="mode"
+                        description="Select mode"
+                        value={selectedMode}
+                        handler={handleModeChange}
+                        options={MODE_OPTIONS}
+                    />
                     {selectedMode === POINT_VALUE &&
-                        <div>
-                            <Stack direction="row" spacing={2}>
-                                <TextField
-                                    error={isPositionAValid}
-                                    value={positionA}
-                                    onChange={(e) => setPositionA(e.target.value)}
-                                    label="Position A"
-                                    variant="outlined"
-                                    size="small"
-                                    slotProps={{
-                                        input: {
-                                            autoComplete: 'off',
-                                        },
-                                    }}
-                                />
-                                <TextField
-                                    error={isPositionBValid}
-                                    value={positionB}
-                                    onChange={(e) => setPositionB(e.target.value)}
-                                    label="Position B"
-                                    variant="outlined"
-                                    size="small"
-                                    slotProps={{
-                                        input: {
-                                            autoComplete: 'off',
-                                        },
-                                    }}
-                                />
-                            </Stack>
-                            <Box marginTop={1}>
-                                <Button disabled={isPositionAValid || isPositionBValid} size="medium" variant="outlined"
-                                        onClick={sendMessageChange} endIcon={<SendIcon/>}>
-                                    Send message
-                                </Button>
-                            </Box>
-                        </div>}
+                        <PointInput sendMessagePosition={sendMessagePosition}/>
+                    }
                     <Box marginTop={2} display="flex" justifyContent="space-between" gap={1}>
                         <Button
                             size="medium"
