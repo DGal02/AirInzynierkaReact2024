@@ -8,7 +8,7 @@ const PointInput = ({sendMessagePosition}) => {
     const [positionB, setPositionB] = useState('');
 
     const handlePositionAChange = (e) => {
-        setPositionA(e.target.value)
+        setPositionA(e.target.value);
     };
 
     const handlePositionBChange = (e) => {
