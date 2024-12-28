@@ -39,15 +39,11 @@ function App() {
         };
 
         socket.onmessage = (event) => {
-            try {
-                const response = JSON.parse(event.data);
-                setDataA(prevState => [...prevState, ...response.dataA]);
-                setDataB(prevState => [...prevState, ...response.dataB]);
-                setDataErrorA(prevState => [...prevState, ...response.dataErrorA]);
-                setDataErrorB(prevState => [...prevState, ...response.dataErrorB]);
-            } catch (e) {
-                console.log(event.data);
-            }
+            const response = JSON.parse(event.data);
+            setDataA(prevState => [...prevState, ...response.dataA]);
+            setDataB(prevState => [...prevState, ...response.dataB]);
+            setDataErrorA(prevState => [...prevState, ...response.dataErrorA]);
+            setDataErrorB(prevState => [...prevState, ...response.dataErrorB]);
         };
 
         // socket.onerror = (error) => {
