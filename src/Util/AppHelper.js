@@ -66,12 +66,16 @@ export const transformUnitLabelToUnit = (unit) => {
     }
 };
 
+const parseStringToFloat = (string) => {
+    return parseFloat(string.replace(",", "."));
+};
+
 export const transformPositionToRaw = (unit, position) => {
     switch (unit) {
         case ANGLE:
-            return parseInt(parseFloat(position) / RAW_TO_ANGLE);
+            return parseInt(parseStringToFloat(position) / RAW_TO_ANGLE);
         case RAD:
-            return parseInt(parseFloat(position) / RAW_TO_RAD);
+            return parseInt(parseStringToFloat(position) / RAW_TO_RAD);
         case RAW:
         default:
             return parseInt(position);
