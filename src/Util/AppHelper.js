@@ -42,28 +42,6 @@ export const sampleRate = 1000;
 
 export const timeStep = 1 / sampleRate;
 
-export const INITIAL_LAYOUT_OPTIONS = {
-    paper_bgcolor: '#0F1214',
-    plot_bgcolor: '#0F1214',
-    xaxis: {
-        title: 'Time [s]',
-        color: 'white',
-        gridcolor: '#444',
-    },
-    yaxis: {
-        title: 'Position [cm]',
-        color: 'white',
-        gridcolor: '#444',
-    },
-    title: {
-        text: 'Position of the rotor',
-        font: {
-            size: 20,
-            color: 'white'
-        }
-    }
-};
-
 export const transformRawToAngle = (y) => {
     return y.map((sample) => {
         return (sample * RAW_TO_ANGLE);

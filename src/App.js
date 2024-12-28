@@ -20,6 +20,11 @@ import './App.css';
 import RadioForm from "./Form/RadioForm";
 import {MODE_OPTIONS, UNIT_OPTIONS} from "./Util/FormHelper";
 import PointInput from "./Form/PointInput";
+import {
+    INITIAL_LAYOUT_OPTIONS_ROTOR_X,
+    INITIAL_LAYOUT_OPTIONS_ROTOR_X_ERROR,
+    INITIAL_LAYOUT_OPTIONS_ROTOR_Y, INITIAL_LAYOUT_OPTIONS_ROTOR_Y_ERROR
+} from "./Util/PlotHelper";
 
 function App() {
     const [dataA, setDataA] = useState([]);
@@ -187,12 +192,14 @@ function App() {
                 </ThemeProvider>
                 <div>
                     <div className="plot-container">
-                        <MyPlot y={dataA} unit={selectedUnit}/>
-                        <MyPlot y={dataErrorA} unit={selectedUnit}/>
+                        <MyPlot y={dataA} unit={selectedUnit} initialPlotLayout={INITIAL_LAYOUT_OPTIONS_ROTOR_X}/>
+                        <MyPlot y={dataErrorA} unit={selectedUnit}
+                                initialPlotLayout={INITIAL_LAYOUT_OPTIONS_ROTOR_X_ERROR}/>
                     </div>
                     <div className="plot-container">
-                        <MyPlot y={dataB} unit={selectedUnit}/>
-                        <MyPlot y={dataErrorB} unit={selectedUnit}/>
+                        <MyPlot y={dataB} unit={selectedUnit} initialPlotLayout={INITIAL_LAYOUT_OPTIONS_ROTOR_Y}/>
+                        <MyPlot y={dataErrorB} unit={selectedUnit}
+                                initialPlotLayout={INITIAL_LAYOUT_OPTIONS_ROTOR_Y_ERROR}/>
                     </div>
                 </div>
             </header>

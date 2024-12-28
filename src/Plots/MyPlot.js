@@ -1,7 +1,6 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import Plot from 'react-plotly.js';
 import {
-    INITIAL_LAYOUT_OPTIONS,
     ANGLE,
     RAD,
     RAW,
@@ -11,8 +10,8 @@ import {
     transformUnitLabelToUnit,
 } from '../Util/AppHelper';
 
-const MyPlot = ({y, unit}) => {
-    const [plotLayout, setPlotLayout] = useState(structuredClone(INITIAL_LAYOUT_OPTIONS));
+const MyPlot = ({y, unit, initialPlotLayout}) => {
+    const [plotLayout, setPlotLayout] = useState(structuredClone(initialPlotLayout));
     const [xData, setXData] = useState([]);
 
     const yData = useMemo(() => {
