@@ -29,7 +29,7 @@ const PointInput = ({sendMessagePosition}) => {
                 error={isPositionAValid}
                 value={positionA}
                 onChange={handlePositionAChange}
-                label="Position A"
+                label="Position X"
                 variant="outlined"
                 size="small"
                 slotProps={{
@@ -42,7 +42,7 @@ const PointInput = ({sendMessagePosition}) => {
                 error={isPositionBValid}
                 value={positionB}
                 onChange={handlePositionBChange}
-                label="Position B"
+                label="Position Y"
                 variant="outlined"
                 size="small"
                 slotProps={{
