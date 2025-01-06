@@ -27,10 +27,10 @@ const INITIAL_LAYOUT_OPTIONS_ROTOR_Y = structuredClone(INITIAL_LAYOUT_OPTIONS);
 INITIAL_LAYOUT_OPTIONS_ROTOR_Y.title.text = 'Position of the rotor in Y axis';
 
 const INITIAL_LAYOUT_OPTIONS_ROTOR_X_ERROR = structuredClone(INITIAL_LAYOUT_OPTIONS);
-INITIAL_LAYOUT_OPTIONS_ROTOR_X_ERROR.title.text = 'Error of rotor in X axis';
+INITIAL_LAYOUT_OPTIONS_ROTOR_X_ERROR.title.text = 'Error of the rotor in X axis';
 
 const INITIAL_LAYOUT_OPTIONS_ROTOR_Y_ERROR = structuredClone(INITIAL_LAYOUT_OPTIONS);
-INITIAL_LAYOUT_OPTIONS_ROTOR_Y_ERROR.title.text = 'Error of rotor in Y axis';
+INITIAL_LAYOUT_OPTIONS_ROTOR_Y_ERROR.title.text = 'Error of the rotor in Y axis';
 
 export {
     INITIAL_LAYOUT_OPTIONS_ROTOR_X,
