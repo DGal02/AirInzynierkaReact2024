@@ -24,7 +24,7 @@ const PointInput = ({sendMessagePosition}) => {
     }, [positionB]);
 
     return <div>
-        <Stack direction="row" spacing={2}>
+        <Stack marginTop={1} direction="row" spacing={2}>
             <TextField
                 error={isPositionAValid}
                 value={positionA}

@@ -13,7 +13,13 @@ const RadioForm = ({description, value, handler, options, name}) => {
         });
     }, [options]);
 
-    return <Box marginTop={3}>
+    return <Box display="flex"
+                flexDirection="row"
+                gap={2}
+                alignItems="stretch"
+                flexWrap="wrap"
+                justifyContent="center"
+                marginTop={3}>
         <FormControl component="fieldset">
             <FormLabel
                 component="legend"

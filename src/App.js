@@ -156,7 +156,13 @@ function App() {
                     {selectedMode === POINT_VALUE &&
                         <PointInput sendMessagePosition={sendMessagePosition}/>
                     }
-                    <Box marginTop={2} display="flex" justifyContent="space-between" gap={1}>
+                    <Box display="flex"
+                         flexDirection="row"
+                         gap={2}
+                         alignItems="stretch"
+                         flexWrap="wrap"
+                         justifyContent="center"
+                         marginTop={2}>
                         <Button
                             size="medium"
                             variant="outlined"
