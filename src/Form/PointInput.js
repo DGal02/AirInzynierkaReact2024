@@ -4,31 +4,31 @@ import SendIcon from "@mui/icons-material/Send";
 import {isNumber} from "../Util/AppHelper";
 
 const PointInput = ({sendMessagePosition}) => {
-    const [positionA, setPositionA] = useState('');
-    const [positionB, setPositionB] = useState('');
+    const [positionX, setPositionX] = useState('');
+    const [positionY, setPositionY] = useState('');
 
-    const handlePositionAChange = (e) => {
-        setPositionA(e.target.value);
+    const handlePositionXChange = (e) => {
+        setPositionX(e.target.value);
     };
 
-    const handlePositionBChange = (e) => {
-        setPositionB(e.target.value);
+    const handlePositionYChange = (e) => {
+        setPositionY(e.target.value);
     };
 
-    const isPositionAValid = useMemo(() => {
-        return !isNumber(positionA);
-    }, [positionA]);
+    const isPositionXValid = useMemo(() => {
+        return !isNumber(positionX);
+    }, [positionX]);
 
-    const isPositionBValid = useMemo(() => {
-        return !isNumber(positionB);
-    }, [positionB]);
+    const isPositionYValid = useMemo(() => {
+        return !isNumber(positionY);
+    }, [positionY]);
 
     return <div>
         <Stack marginTop={1} direction="row" spacing={2}>
             <TextField
-                error={isPositionAValid}
-                value={positionA}
-                onChange={handlePositionAChange}
+                error={isPositionXValid}
+                value={positionX}
+                onChange={handlePositionXChange}
                 label="Position X"
                 variant="outlined"
                 size="small"
@@ -39,9 +39,9 @@ const PointInput = ({sendMessagePosition}) => {
                 }}
             />
             <TextField
-                error={isPositionBValid}
-                value={positionB}
-                onChange={handlePositionBChange}
+                error={isPositionYValid}
+                value={positionY}
+                onChange={handlePositionYChange}
                 label="Position Y"
                 variant="outlined"
                 size="small"
@@ -53,9 +53,9 @@ const PointInput = ({sendMessagePosition}) => {
             />
         </Stack>
         <Box marginTop={1}>
-            <Button disabled={isPositionAValid || isPositionBValid} size="medium" variant="outlined"
+            <Button disabled={isPositionXValid || isPositionYValid} size="medium" variant="outlined"
                     onClick={() => {
-                        sendMessagePosition(positionA, positionB);
+                        sendMessagePosition(positionX, positionY);
                     }} endIcon={<SendIcon/>}>
                 Send message
             </Button>

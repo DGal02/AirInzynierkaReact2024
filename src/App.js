@@ -27,10 +27,10 @@ import {
 } from "./Util/PlotHelper";
 
 function App() {
-    const [dataA, setDataA] = useState([]);
-    const [dataB, setDataB] = useState([]);
-    const [dataErrorA, setDataErrorA] = useState([]);
-    const [dataErrorB, setDataErrorB] = useState([]);
+    const [dataX, setDataX] = useState([]);
+    const [dataY, setDataY] = useState([]);
+    const [dataErrorX, setDataErrorX] = useState([]);
+    const [dataErrorY, setDataErrorY] = useState([]);
     const [fetchingInterval, setFetchingInterval] = useState(null);
     const [isEngineEnabled, setIsEngineEnabled] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState(ANGLE);
@@ -45,10 +45,10 @@ function App() {
 
         socket.onmessage = (event) => {
             const response = JSON.parse(event.data);
-            setDataA(prevState => [...prevState, ...response.dataA]);
-            setDataB(prevState => [...prevState, ...response.dataB]);
-            setDataErrorA(prevState => [...prevState, ...response.dataErrorA]);
-            setDataErrorB(prevState => [...prevState, ...response.dataErrorB]);
+            setDataX(prevState => [...prevState, ...response.dataX]);
+            setDataY(prevState => [...prevState, ...response.dataY]);
+            setDataErrorX(prevState => [...prevState, ...response.dataErrorX]);
+            setDataErrorY(prevState => [...prevState, ...response.dataErrorY]);
         };
 
         // socket.onerror = (error) => {
@@ -60,21 +60,21 @@ function App() {
         };
     }, []);
 
-    const sendMessagePosition = (positionA, positionB) => {
+    const sendMessagePosition = (positionX, positionY) => {
         if (webSocket.current) {
             const messageStruct = {
-                positionA: transformPositionToRaw(selectedUnit, positionA),
-                positionB: transformPositionToRaw(selectedUnit, positionB),
+                positionX: transformPositionToRaw(selectedUnit, positionX),
+                positionY: transformPositionToRaw(selectedUnit, positionY),
             };
             webSocket.current.send(JSON.stringify(messageStruct));
         }
     };
 
     const resetPlots = () => {
-        setDataA([]);
-        setDataB([]);
-        setDataErrorA([]);
-        setDataErrorB([]);
+        setDataX([]);
+        setDataY([]);
+        setDataErrorX([]);
+        setDataErrorY([]);
     };
 
     const startFetching = () => {
@@ -121,10 +121,10 @@ function App() {
 
     const downloadJsonFile = () => {
         const data = {
-            dataA,
-            dataB,
-            dataErrorA,
-            dataErrorB,
+            dataX,
+            dataY,
+            dataErrorX,
+            dataErrorY,
         };
         const jsonData = JSON.stringify(data, null, 2);
         const blob = new Blob([jsonData], {type: 'application/json'});
@@ -198,13 +198,13 @@ function App() {
                 </ThemeProvider>
                 <div>
                     <div className="plot-container">
-                        <MyPlot y={dataA} unit={selectedUnit} initialPlotLayout={INITIAL_LAYOUT_OPTIONS_ROTOR_X}/>
-                        <MyPlot y={dataErrorA} unit={selectedUnit}
+                        <MyPlot y={dataX} unit={selectedUnit} initialPlotLayout={INITIAL_LAYOUT_OPTIONS_ROTOR_X}/>
+                        <MyPlot y={dataErrorX} unit={selectedUnit}
                                 initialPlotLayout={INITIAL_LAYOUT_OPTIONS_ROTOR_X_ERROR}/>
                     </div>
                     <div className="plot-container">
-                        <MyPlot y={dataB} unit={selectedUnit} initialPlotLayout={INITIAL_LAYOUT_OPTIONS_ROTOR_Y}/>
-                        <MyPlot y={dataErrorB} unit={selectedUnit}
+                        <MyPlot y={dataY} unit={selectedUnit} initialPlotLayout={INITIAL_LAYOUT_OPTIONS_ROTOR_Y}/>
+                        <MyPlot y={dataErrorY} unit={selectedUnit}
                                 initialPlotLayout={INITIAL_LAYOUT_OPTIONS_ROTOR_Y_ERROR}/>
                     </div>
                 </div>
