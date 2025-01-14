@@ -31,6 +31,8 @@ function App() {
     const [dataY, setDataY] = useState([]);
     const [dataErrorX, setDataErrorX] = useState([]);
     const [dataErrorY, setDataErrorY] = useState([]);
+    const [positionX, setPositionX] = useState('');
+    const [positionY, setPositionY] = useState('');
     const [fetchingInterval, setFetchingInterval] = useState(null);
     const [isEngineEnabled, setIsEngineEnabled] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState(ANGLE);
@@ -119,6 +121,14 @@ function App() {
         }
     };
 
+    const handlePositionXChange = (e) => {
+        setPositionX(e.target.value);
+    };
+
+    const handlePositionYChange = (e) => {
+        setPositionY(e.target.value);
+    };
+
     const downloadJsonFile = () => {
         const data = {
             dataX,
@@ -154,7 +164,10 @@ function App() {
                         options={MODE_OPTIONS}
                     />
                     {selectedMode === POINT_VALUE &&
-                        <PointInput sendMessagePosition={sendMessagePosition}/>
+                        <PointInput positionX={positionX} positionY={positionY}
+                                    handlePositionXChange={handlePositionXChange}
+                                    handlePositionYChange={handlePositionYChange}
+                                    sendMessagePosition={sendMessagePosition}/>
                     }
                     <Box display="flex"
                          flexDirection="row"

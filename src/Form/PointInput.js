@@ -1,20 +1,9 @@
-import React, {useMemo, useState} from 'react';
+import React, {useMemo} from 'react';
 import {Box, Button, Stack, TextField} from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import {isNumber} from "../Util/AppHelper";
 
-const PointInput = ({sendMessagePosition}) => {
-    const [positionX, setPositionX] = useState('');
-    const [positionY, setPositionY] = useState('');
-
-    const handlePositionXChange = (e) => {
-        setPositionX(e.target.value);
-    };
-
-    const handlePositionYChange = (e) => {
-        setPositionY(e.target.value);
-    };
-
+const PointInput = ({sendMessagePosition, positionX, positionY, handlePositionXChange, handlePositionYChange}) => {
     const isPositionXValid = useMemo(() => {
         return !isNumber(positionX);
     }, [positionX]);
